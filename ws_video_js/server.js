@@ -23,8 +23,7 @@ const wsServer = new WebSocket.Server({ port: WS_PORT }, () =>
 );
 
 const imageQueue = [];
-const audioQueue = [];
-const IMAGE_DELAY = 400;  // 1 second delay for images to sync with audio
+
 
 // array of connected websocket clients
 let connectedClients = [];
