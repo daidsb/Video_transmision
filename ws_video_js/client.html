@@ -220,11 +220,11 @@
             isConnected = true;
             showPlaybackControls(true);
 
-            ws = new WebSocket('ws://192.168.137.1:8765');
+            ws = new WebSocket('ws://192.168.0.5:8765');
             ws.binaryType = 'arraybuffer';
 
             ws.onopen = () => {
-                logHistory('Connected to WebSocket server');
+                logHistory('Conectado al servidor Websocket');
             };
 
             let currentMessage = null;

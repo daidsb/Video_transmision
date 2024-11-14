@@ -15,7 +15,7 @@ const app = express();
 
 const WS_PORT = process.env.WS_PORT || 8765;
 const HTTP_PORT = process.env.HTTP_PORT || 5000;
-const HOST = '192.168.137.1';
+const HOST = '192.168.0.5';
 
 
 const wsServer = new WebSocket.Server({ port: WS_PORT }, () =>

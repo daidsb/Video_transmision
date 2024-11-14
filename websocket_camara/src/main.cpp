@@ -8,11 +8,14 @@ unsigned long startTime = 0; // Tiempo en el que empezó a intentar conectarse
 const unsigned long wifiTimeout = 30000; // Tiempo límite para conectar (30 segundos)
 
 // Your WiFi credentials.
-const char* ssid = "LAPTOP_LENOVO";
-const char* pass = "87654321"; //"147258369";
+//const char* ssid = "LAPTOP_LENOVO";
+//const char* pass = "87654321"; //"147258369";
+
+const char* ssid = "Ximena-1";
+const char* pass = "Ximena11."; //"147258369";
 
 //Conexion Websocket
-const char* ws_server = "192.168.137.1"; 
+const char* ws_server = "192.168.0.5";//"34.176.118.69"; 
 const int ws_port = 8765; 
 
 WebSocketsClient webSocket;
@@ -109,6 +112,13 @@ void connectToWiFi() {
   }
   Serial.println("");
   Serial.println("WiFi conectado");
+  Serial.print("Dirección IP: "); 
+  Serial.println(WiFi.localIP()); 
+  Serial.print("Máscara de subred: "); 
+  Serial.println(WiFi.subnetMask()); 
+  Serial.print("Gateway: "); 
+  Serial.println(WiFi.gatewayIP());
+  
   digitalWrite(ledPin, HIGH);
 }
 
