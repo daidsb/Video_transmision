@@ -2,6 +2,8 @@
 #include "esp_camera.h"
 #include <WiFi.h>
 #include <WebSocketsClient.h>
+#include <esp_system.h>
+#include <esp_heap_caps.h>
 
 const int ledPin = 2;            // Pin LED 
 unsigned long startTime = 0; // Tiempo en el que empezó a intentar conectarse
@@ -21,6 +23,7 @@ const int ws_port = 8765;
 WebSocketsClient webSocket;
 
 bool isConnected = false;
+uint8_t contadorFrames = 0;
 
 //CAMERA_MODEL_ESP32S3_EYE
 #define PWDN_GPIO_NUM -1
@@ -63,7 +66,7 @@ void iniCamara() {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 10000000;
-  config.frame_size = FRAMESIZE_CIF;
+  config.frame_size = FRAMESIZE_VGA;
   config.pixel_format = PIXFORMAT_JPEG;
   config.grab_mode = CAMERA_GRAB_LATEST;
   config.jpeg_quality = 30;
@@ -177,32 +180,48 @@ void setup() {
   webSocket.enableHeartbeat(15000, 3000, 2); 
   delay(2000);
 
+  
 }
 
 void loop() {
 
   webSocket.loop();
-
+                             
   camera_fb_t * fb = NULL;
   fb = esp_camera_fb_get();
  
   if (fb) {
 
     if (webSocket.isConnected()) {
-        //Serial.print("Mensaje");
-        webSocket.sendBIN(fb->buf, fb->len);
-        //Serial.println(" enviado");
-      }
-      else{
-        //Serial.println("no enviado");
-      }
+       
+      webSocket.sendBIN(fb->buf, fb->len);
+      contadorFrames++;
+
+      if(contadorFrames >= 12){
+        contadorFrames = 0;
+      // Obtener la informacion del chip 
+        float chipTemperature = temperatureRead(); 
+        int32_t rssi = WiFi.RSSI();
+
+        //calcular memoria libre
+        uint32_t freeHeap = ESP.getFreeHeap(); 
+        uint32_t totalHeap = ESP.getHeapSize();
+
+        String jsonMessage = "{\"type\": \"sensores\", \"temperatura\":" + String(chipTemperature) + 
+                                    ",\"freeHeap\":" + String(freeHeap) + 
+                                    ",\"totalHeap\":" + String(totalHeap) + 
+                                    ",\"rssi\":" + String(rssi) + "}";  
+
+        webSocket.sendTXT(jsonMessage);
+
+      }  
+    }
     
-    //Serial.print(".");
     esp_camera_fb_return(fb);
 
   }
   else{
-    //Serial.println("Error al capturar imagen");
+    
     esp_camera_fb_return(fb);
   }
 

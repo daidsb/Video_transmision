@@ -5,19 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camara en tiempo real</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #121212;
+            background-color: #0a3e1e;
             color: #FFFFFF;
             margin: 0;
-            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 20px;
+            
         }
-
-        .main-container {
+        
+        .contenedor-main {     
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -25,188 +27,218 @@
             max-width: 1200px;
         }
 
-        .container {
+        .contenedor-cam{
             width: 100%;
             max-width: 600px;
             min-width: 400px;
             text-align: center;
-            background-color: #1E1E1E;
+            background-color: #0f612f;
             padding: 20px;
+            margin-top: 0;
+            padding-top: 0px;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .controles {
-            width: 100%;
-            max-width: 300px;
-            height: 550px;
-            overflow-y: auto;
-            margin-left: 10px;
-            background-color: #2E2E2E;
-            border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            font-size: 12px;
-        }
-
-        .controles-boton {
-            background-color: #216e57;
-            color: #FFFFFF;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            font-size: 26px;
-            font-weight: 500;
-        }
-
-        .controls {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-
-        .control-button {
-            background-color: #3E3E3E;
-            color: #FFFFFF;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .control-button:hover {
-            background-color: #575757;
-        }
-
-        .checkbox-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .checkbox-section label {
-            display: flex;
-            align-items: center;
-        }
-
-        .checkbox-section input[type="checkbox"] {
             margin-right: 10px;
         }
 
-        .slider-container {
+        .botones-camara {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 20px;
+            justify-content: space-around;
+            margin-bottom: 15px;
         }
 
-        .slider-container input[type="range"] {
-            width: 80%;
-        }
-
-        img {
-            width: 100%;
-            height: auto;
-            max-width: 100%;
-            border-radius: 10px;
-        }
-
-        /* Hide Pause and Play buttons initially */
-        #pauseBtn, #continueBtn {
-            display: none;
-        }
-
-        .history-log {
-            font-size: 10px;
-            line-height: 1;
-            color: #FFF;
-            font-family: monospace;
-        }
-
-        .history-log div {
+        #fpsDisplay{
             margin-bottom: 10px;
-            padding: 8px;
+        }
+        
+        .contenedor-est-control{
+            width: 100%;
+            max-width: 400px;
+            min-width: 300px;
+            text-align: center;
+            padding: 20px;
+            margin-top: 10;
+            padding-top: 0px;
+            border-radius: 10px;
+            margin-left: 10px;
+        }
+        
+    .contenedor-estado{
+            width: 100%;
+            max-width: 400px;
+            min-width: 200px;
+            text-align: center;
+            background-color: #0f612f;
+            
+            margin-top: 0;
+            padding-top: 10px;
+            border-radius: 10px;
+            padding-bottom: 10px;
+    }
+
+    .contenedor-botones{
+            width: 100%;
+            max-width: 400px;
+            min-width: 200px;
+            text-align: center;
+            background-color: #0f612f;
+            
+            margin-top: 20px;
+            padding-top: 10px;
+            border-radius: 10px;
+            padding-bottom: 20px;
+    }
+
+
+    .video-boton {
             background-color: #3E3E3E;
-            border-radius: 4px;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
-        .fps-counter {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 5px;
-            border-radius: 3px;
-            font-family: Arial, sans-serif;
-            z-index: 1000;
-            font-size: 14px;
+        .video-boton:hover {
+            background-color: #575757;
         }
 
-        /* Responsive Design */
-        @media (max-width: 800px) {
-            .main-container {
-                flex-direction: column;
-            }
 
-            .history {
-                max-width: 100%;
-                margin-left: 0;
-                margin-top: 20px;
-                height: auto;
-            }
+        .controles-boton {
+            background-color: #1f3149;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            position: absolute;
+            margin-top: 10px;
         }
+
+        .controles-boton:hover {
+            background-color: #4b668a;
+        }
+
+  
+        
+        .botones-control { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 30vh; 
+            position: relative; 
+        }    
+
+        #ad { top: 10px; } #back { bottom: 10px; } #der { right: 30px; } #iz { left: 30px; }
+
+        .estado-esp32 {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 20vh;
+
+        }
+
+    
+        .termometro { 
+            font-size: 50px; 
+            color: red;
+            margin-bottom: 20px;
+            transform: scaleY(1.1) scaleX(1.1);
+            
+        }
+
+        #temperatura { 
+            font-size: 20px; 
+            color: rgb(252, 252, 252);
+            margin-bottom: 10px;
+        }
+
+        .memoria { 
+            font-size: 60px; 
+            color: rgb(130, 132, 138);
+            margin-bottom: 35px;
+        }
+
+        #memoria_porc { 
+            font-size: 20px; 
+            color: rgb(252, 252, 252);
+            margin-top: 15px;
+        }
+
+
+        .wifi { 
+            font-size: 50px; 
+            color: rgba(1, 245, 13, 0.877);
+            margin-bottom: 30px;
+        }
+
+        #wifi_inte { 
+            font-size: 20px; 
+            color: rgb(252, 252, 252);
+            margin-top: 20px;
+        }
+
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="container">
-            <h1>Transmision de video</h1>
+    <div class = "contenedor-main">
 
-            <!-- Connection Section -->
-            <div class="controls">
-                <button id="avanzar" class = "controles-boton" onmousedown="avanzar()" > Adelante </button>
-                <button id="connectBtn" class="control-button" onclick="toggleConnection()">Conectar</button>
-                <button id="pauseBtn" class="control-button" onclick="pause()" disabled>Pausar</button>
-                <button id="continueBtn" class="control-button" onclick="continuePlay()" disabled>Reanudar</button>
-                <div id="fpsDisplay">FPS: 0</div>
+        <div class = "contenedor-cam">
+            <h1>Camara 1</h1>
+            <div class = "botones-camara">
+                <button id="pauseBtn" class="video-boton" onclick="pause()" disabled>Pausar</button>
+                <button id="continueBtn" class="video-boton" onclick="continuePlay()" disabled>Reanudar</button>
+                
+            </div>       
+            <div id="fpsDisplay">FPS: 0</div>
+            <img id="imageDisplay" width="500" src="" alt="Imagen aparecerá aquí">
+        </div>
+    
+        <div class = "contenedor-est-control">
+            <div class = "contenedor-estado">
+                <h1>Estado ESP32</h1>
+                <div class="estado-esp32">           
+                    <div class="termometro"> 
+                        <i class="fas fa-thermometer-half termometro"></i>
+                        <div id="temperatura">T°</div>
+                    </div>
+
+                    <div class = "memoria">
+                        <i class="fa-solid fa-microchip"></i>  
+                        <div id="memoria_porc">%</div> 
+
+                    </div>
+
+                    <div class = "wifi">
+                        <i class="fa-solid fa-wifi"></i>
+                        <div id="wifi_inte">RSSI</div>
+                    </div>
+
+                </div>
+            </div>
+        
+            <div class = "contenedor-botones">
+                <h1>Controles</h1>
+                <div class = "botones-control">
+                    <button id="ad" class = "controles-boton" onmousedown="avanzar()" > Adelante </button>
+                    <button id="back" class = "controles-boton" > retroceder </button>
+                    <button id="der" class = "controles-boton"  > derecha </button>
+                    <button id="iz" class = "controles-boton" > izquierda </button>
+                </div>
             </div>
 
-            
-
-
-            <!-- Image Display -->
-            <img id="imageDisplay" src="" alt="Image will appear here">
         </div>
 
-
-
-
-        <!-- Event History Section -->
-    <div class="history">           
-            <h2>Historial de eventos</h2>
-            <div class="controles">           
-                <h2>Controles</h2>
-                <div id="historyLog" class="history-log"></div>
-            </div>
-            
-        </div>
-   
 
     </div>
 
-    <script src="https://unpkg.com/pcm-player"></script>
     <script>
-        let isConnected = false;
+
+let isConnected = false;
         let player;
         let urlObject;
         let ws;
@@ -215,85 +247,70 @@
         let frameCount = 0;
         let fps = 0;
         let lastTime = performance.now();
+        let ram_porcentaje = 0;
+        let freeHeap = 0;
+        let totalHeap = 0;
 
-        let fpsDisplay = document.createElement('div');
-
-
-        const connectBtn = document.getElementById('connectBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         const continueBtn = document.getElementById('continueBtn');
-        const audioCheckbox = document.getElementById('audioCheckbox');
-      //const imageCheckbox = document.getElementById('imageCheckbox');
         const img = document.getElementById('imageDisplay');
-        const historyLog = document.getElementById('historyLog');
-
-        function toggleConnection() {
-            if (isConnected) {
-                disconnect();
-            } else {
-                connect();
-            }
-        }
-
-        function connect() {
-            connectBtn.innerText = 'Desconectado';
-            isConnected = true;
-            showPlaybackControls(true);
-
-            ws = new WebSocket('ws://192.168.0.5:8765');
-            ws.binaryType = 'arraybuffer';
-
-            ws.onopen = () => {
-                logHistory('Conectado al servidor Websocket');
-            };
-
-            let currentMessage = null;
-             ws.onmessage = (event) => {
-                if (!continueBtn.disabled) return;
 
 
-                if (typeof event.data === "string") {
-                    currentMessage = JSON.parse(event.data);
-                } else if (currentMessage && currentMessage.type === "image") {
+
+        ws = new WebSocket('ws://192.168.0.5:8765');
+        ws.binaryType = 'arraybuffer';
+
+        ws.onopen = () => {
+            
+        };
+
+        let currentMessage = null;
+        ws.onmessage = (event) => {
+            
+            if (typeof event.data === "string") {
+                currentMessage = JSON.parse(event.data);
+                console.log(event.data.toString());    
+            } else 
+                if (currentMessage && currentMessage.type === "image") {
+                    
                     if (urlObject) URL.revokeObjectURL(urlObject);
                     urlObject = URL.createObjectURL(new Blob([event.data]));
                     img.src = urlObject;
 
-                    calculateFPS();
-
-                    logHistory(`[Paquete ${packetIndex++}] Imagen: ${event.data.byteLength} bytes`);
-
-                    
+                    calculateFPS();      
                 }
-            };
+                if(currentMessage && currentMessage.type === "sensores"){
+                    document.getElementById('temperatura').textContent = `${currentMessage.temperatura}°`;
+                    
+                    document.getElementById('wifi_inte').textContent = `${currentMessage.rssi} dBm`;
+                    
+                    freeHeap =  parseInt(currentMessage.freeHeap);
+                    totalHeap = parseInt(currentMessage.totalHeap);
+                    ram_porcentaje = (totalHeap - freeHeap)*100/totalHeap;
+                    document.getElementById('memoria_porc').textContent = `${ram_porcentaje.toFixed(2)}%`;
+                }
+                
+                
 
-            ws.onclose = () => {
-                logHistory('Desonectado del Websocket');
-                connectBtn.innerText = 'Connect';
-                isConnected = false;
-                showPlaybackControls(false);
-            };
+        };
 
-        }
+        ws.onclose = () => {
+            isConnected = false;
+        };
 
-        function disconnect() {
-            if (ws) {
-                ws.close();
-            }
-        }
 
         function pause() {
             pauseBtn.disabled = true;
             continueBtn.disabled = false;
             player.pause();
-            logHistory('Historial en pausa');
+            
         }
 
         function continuePlay() {
             continueBtn.disabled = true;
             pauseBtn.disabled = false;
             player.continue();
-            logHistory('Historial reanudado');
+            
         }
 
         function showPlaybackControls(show) {
@@ -303,16 +320,6 @@
             if(show){
                 pauseBtn.disabled = false;
                 continueBtn.disabled = true;
-            }
-        }
-
-        function logHistory(message) {
-            const logEntry = document.createElement('div');
-            logEntry.innerText = message;
-            historyLog.prepend(logEntry);
-
-            while (historyLog.childElementCount > 30) {
-                historyLog.removeChild(historyLog.lastChild);
             }
         }
 
@@ -333,15 +340,15 @@
             ws.send(JSON.stringify({ command: 'avanzar', enabled: true }));
         }
 
-/*       function startSending() { 
-           intervalId = setInterval(avanzar, 100); //enciar cada 100ms
-        } 
-        
-        function stopSending() { 
-            clearInterval(intervalId); 
-        }
-*/
 
+        function termometro(){
+
+
+
+
+        }
     </script>
+    
+    
 </body>
 </html>

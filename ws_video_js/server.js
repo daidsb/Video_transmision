@@ -42,9 +42,9 @@ wsServer.on("connection", (ws, req) => {
       connectedClients.push(ws);  // Add HTML clients to the array
     }
 
-    ws.on("message", (data) => {
+    ws.on("message", (data,isBinary) => {
       if (esp32Client && ws === esp32Client) {
-        if (data instanceof Buffer) {
+        if (isBinary) {
           if (isValidJPEG(data)) { 
 
             // Add image data to imageQueue with a delay timestamp
@@ -55,6 +55,20 @@ wsServer.on("connection", (ws, req) => {
               processImageQueue();
             });
           }
+        }
+
+        else{
+          //const jsonData = JSON.parse(data);
+          string_data= data.toString();
+          connectedClients.forEach((client, i) => {
+            if (client.readyState === client.OPEN) {      
+              client.send(string_data);
+              
+            } else {
+              connectedClients.splice(i, 1); 
+            }
+          });
+          
         }
       }else{
          if (connectedClients.includes(ws)) {
