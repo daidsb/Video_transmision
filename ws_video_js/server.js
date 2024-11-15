@@ -57,19 +57,21 @@ wsServer.on("connection", (ws, req) => {
           }
         }
       }else{
-         if (typeof data === "string") {
-          
-          const settings = JSON.parse(data);
-
-          if(settings.command === "imageCheckbox"){
-            enabledImage = settings.enabled;
-          }
-          
-          if(esp32Client != null){
-            esp32Client.send(data);
-          }
+         if (connectedClients.includes(ws)) {
+            
+            if (typeof data === "object") {
+              const settings = JSON.parse(data);  
+             
+              if(esp32Client != null){
+                
+                if(settings.command === "avanzar"){
+                  
+                  esp32Client.send("avanzar");
+                }             
+              }
+            }
+               
         }
-
       }
     });
   

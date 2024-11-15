@@ -36,7 +36,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .history {
+        .controles {
             width: 100%;
             max-width: 300px;
             height: 550px;
@@ -47,6 +47,17 @@
             padding: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             font-size: 12px;
+        }
+
+        .controles-boton {
+            background-color: #216e57;
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
         h1 {
@@ -163,9 +174,11 @@
 
             <!-- Connection Section -->
             <div class="controls">
+                <button id="avanzar" class = "controles-boton" onmousedown="avanzar()" > Adelante </button>
                 <button id="connectBtn" class="control-button" onclick="toggleConnection()">Conectar</button>
                 <button id="pauseBtn" class="control-button" onclick="pause()" disabled>Pausar</button>
                 <button id="continueBtn" class="control-button" onclick="continuePlay()" disabled>Reanudar</button>
+                <div id="fpsDisplay">FPS: 0</div>
             </div>
 
             
@@ -175,13 +188,20 @@
             <img id="imageDisplay" src="" alt="Image will appear here">
         </div>
 
+
+
+
         <!-- Event History Section -->
-        <div class="history">
-            
+    <div class="history">           
             <h2>Historial de eventos</h2>
-            <div id="fpsDisplay">FPS: 0</div>
-            <div id="historyLog" class="history-log"></div>
+            <div class="controles">           
+                <h2>Controles</h2>
+                <div id="historyLog" class="history-log"></div>
+            </div>
+            
         </div>
+   
+
     </div>
 
     <script src="https://unpkg.com/pcm-player"></script>
@@ -308,6 +328,19 @@
                 document.getElementById('fpsDisplay').textContent = `FPS: ${fps}`;
             }
         }
+
+        function avanzar() { 
+            ws.send(JSON.stringify({ command: 'avanzar', enabled: true }));
+        }
+
+/*       function startSending() { 
+           intervalId = setInterval(avanzar, 100); //enciar cada 100ms
+        } 
+        
+        function stopSending() { 
+            clearInterval(intervalId); 
+        }
+*/
 
     </script>
 </body>
