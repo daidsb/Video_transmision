@@ -46,6 +46,15 @@
             margin-bottom: 15px;
         }
 
+        #imageDisplay {
+            display: block;
+            margin: 0 auto;
+            backface-visibility: hidden; /* Mejora el rendimiento */
+            -webkit-backface-visibility: hidden;
+            perspective: 1000;
+            -webkit-perspective: 1000;
+        }
+
         #fpsDisplay{
             margin-bottom: 10px;
         }
@@ -195,8 +204,8 @@
                 
             </div>       
             <div id="fpsDisplay">FPS: 0</div>
-            <img id="imageDisplay" width="500" src="" alt="Imagen aparecerá aquí">
-        </div>
+                <img id="imageDisplay" width="500" src="" alt="Video" style="width: 100%; max-width: 1280px; height: auto; object-fit: contain;" >          
+            </div>
     
         <div class = "contenedor-est-control">
             <div class = "contenedor-estado">
@@ -255,11 +264,21 @@ let isConnected = false;
         const continueBtn = document.getElementById('continueBtn');
         const img = document.getElementById('imageDisplay');
 
-
+        img.onload = function() {
+            console.log('Resolución natural:', {
+                width: this.naturalWidth,
+                height: this.naturalHeight
+            });
+            console.log('Resolución mostrada:', {
+                width: this.width,
+                height: this.height
+            });
+        };
 
         ws = new WebSocket('ws://192.168.0.5:8765');
         ws.binaryType = 'arraybuffer';
 
+        
         ws.onopen = () => {
             
         };
@@ -272,9 +291,18 @@ let isConnected = false;
                 console.log(event.data.toString());    
             } else 
                 if (currentMessage && currentMessage.type === "image") {
-                    
+
+                    //Creamos el blob para mostrar la iamgen
+                                    
                     if (urlObject) URL.revokeObjectURL(urlObject);
-                    urlObject = URL.createObjectURL(new Blob([event.data]));
+
+                    const blob = new Blob([event.data], {
+                        type: 'image/jpeg' // o 'image/png' según el formato que envíe tu servidor
+                    });
+
+                    urlObject = URL.createObjectURL(blob);
+
+                    img.style.imageRendering = 'high-quality';  // Para navegadores modernos
                     img.src = urlObject;
 
                     calculateFPS();      
