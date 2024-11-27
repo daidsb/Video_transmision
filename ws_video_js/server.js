@@ -45,6 +45,14 @@ wsServer.on("connection", (ws, req) => {
     ws.on("message", (data,isBinary) => {
       if (esp32Client && ws === esp32Client) {
         if (isBinary) {
+          
+          if (data.length === 1024) {
+           // Sending without syncing
+              broadcastData('audio', data);
+              //console.log("audio no sincronizado");
+
+          }
+
           if (isValidJPEG(data)) { 
 
             // Add image data to imageQueue with a delay timestamp

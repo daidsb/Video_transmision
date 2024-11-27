@@ -17,7 +17,7 @@ const char* ssid = "Ximena-1";
 const char* pass = "Ximena11."; //"147258369";
 
 //Conexion Websocket
-const char* ws_server = "192.168.0.5";//"34.176.118.69"; 
+const char* ws_server = "34.176.62.15";//"34.176.62.15" 
 const int ws_port = 8765; 
 
 WebSocketsClient webSocket;
@@ -66,7 +66,7 @@ void iniCamara() {
   config.pin_pwdn = PWDN_GPIO_NUM;
   config.pin_reset = RESET_GPIO_NUM;
   config.xclk_freq_hz = 10000000;
-  config.frame_size = FRAMESIZE_VGA;
+  config.frame_size = FRAMESIZE_HD;
   config.pixel_format = PIXFORMAT_JPEG;
   config.grab_mode = CAMERA_GRAB_LATEST;
   config.jpeg_quality = 30;
@@ -89,7 +89,7 @@ void iniCamara() {
   }
 
   sensor_t *s = esp_camera_sensor_get();
-  s->set_framesize(s, FRAMESIZE_HVGA);
+  s->set_framesize(s, FRAMESIZE_VGA);
   Serial.println("Camara listo");
 }
 
@@ -195,6 +195,7 @@ void loop() {
     if (webSocket.isConnected()) {
        
       webSocket.sendBIN(fb->buf, fb->len);
+      //Serial.println(fb->len);
       contadorFrames++;
 
       if(contadorFrames >= 12){

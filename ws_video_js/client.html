@@ -56,6 +56,7 @@
         }
 
         #fpsDisplay{
+            margin-top: 10px;
             margin-bottom: 10px;
         }
         
@@ -191,6 +192,18 @@
             margin-top: 20px;
         }
 
+        #audioCheckbox {
+            display: flex;
+            align-items: center;
+        }
+
+        #labelcheckbox {
+            display: flex;
+            align-items: center;
+        }
+
+
+
     </style>
 </head>
 <body>
@@ -201,8 +214,15 @@
             <div class = "botones-camara">
                 <button id="pauseBtn" class="video-boton" onclick="pause()" disabled>Pausar</button>
                 <button id="continueBtn" class="video-boton" onclick="continuePlay()" disabled>Reanudar</button>
+                <label id = "labelcheckbox">
+                    <input type="checkbox" id="audioCheckbox" onchange="toggleAudio()"> Audio
+                </label>
                 
-            </div>       
+            </div>  
+            <div class="slider-container">
+                <span>Volumen: </span>
+                <input type="range" max="1" value="0.5" min="0" id="range" onchange="changeVolume(event)" step="0.1">
+            </div>     
             <div id="fpsDisplay">FPS: 0</div>
                 <img id="imageDisplay" width="500" src="" alt="Video" style="width: 100%; max-width: 1280px; height: auto; object-fit: contain;" >          
             </div>
@@ -245,9 +265,10 @@
 
     </div>
 
+    <script src="https://unpkg.com/pcm-player"></script>
     <script>
 
-let isConnected = false;
+        let isConnected = false;
         let player;
         let urlObject;
         let ws;
@@ -263,6 +284,7 @@ let isConnected = false;
         const pauseBtn = document.getElementById('pauseBtn');
         const continueBtn = document.getElementById('continueBtn');
         const img = document.getElementById('imageDisplay');
+        const audioCheckbox = document.getElementById('audioCheckbox');
 
         img.onload = function() {
             console.log('Resolución natural:', {
@@ -274,6 +296,14 @@ let isConnected = false;
                 height: this.height
             });
         };
+
+        //iniciar audio reproductor
+        player = new PCMPlayer({
+                inputCodec: 'Int16',
+                channels: 1,
+                sampleRate: 16000,
+            });
+
 
         ws = new WebSocket('ws://192.168.0.5:8765');
         ws.binaryType = 'arraybuffer';
@@ -289,8 +319,13 @@ let isConnected = false;
             if (typeof event.data === "string") {
                 currentMessage = JSON.parse(event.data);
                 console.log(event.data.toString());    
-            } else 
-                if (currentMessage && currentMessage.type === "image") {
+            } 
+            else  if (audioCheckbox.checked && currentMessage && currentMessage.type === "audio") {
+                    player.feed(event.data);
+                    console.log("audio reproducido");
+
+            }
+            else  if (currentMessage && currentMessage.type === "image") {
 
                     //Creamos el blob para mostrar la iamgen
                                     
@@ -368,12 +403,20 @@ let isConnected = false;
             ws.send(JSON.stringify({ command: 'avanzar', enabled: true }));
         }
 
+        function toggleAudio() {
+            const audioChecked = document.getElementById('audioCheckbox').checked;
+        }
 
         function termometro(){
 
 
 
 
+        }
+
+        function changeVolume(e) {
+            player.volume(document.getElementById('range').value);
+            logHistory(`Volume set to ${event.target.value}`);
         }
     </script>
     
