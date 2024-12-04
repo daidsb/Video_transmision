@@ -13,8 +13,8 @@ const unsigned long wifiTimeout = 30000; // Tiempo límite para conectar (30 seg
 //const char* ssid = "LAPTOP_LENOVO";
 //const char* pass = "87654321"; //"147258369";
 
-const char* ssid = "Ximena-1";
-const char* pass = "Ximena11."; //"147258369";
+const char* ssid = "ELIZABETH-1";
+const char* pass = "CSEBMC23"; //"147258369";
 
 //Conexion Websocket
 const char* ws_server = "34.176.62.15";//"34.176.62.15" 

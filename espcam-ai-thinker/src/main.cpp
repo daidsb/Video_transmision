@@ -1,34 +1,23 @@
 #include <Arduino.h>
 #include "esp_camera.h"
-#include <driver/i2s.h>
 #include <WiFi.h>
 #include <WebSocketsClient.h>
 #include <ArduinoJson.h>
 #include <esp_system.h>
 #include <esp_heap_caps.h>
 
-// PINES
-#define I2S_WS 42
-#define I2S_SD 47
-#define I2S_SCK 41
-#define I2S_PORT I2S_NUM_0
-
 // WiFi
-const char *ssid = "LAPTOP_LENOVO"; // Ximena-1,ELIZABETH-1,LAPTOP_LENOVO
-const char *pass = "87654321";      //"147258369";Ximena11.,CSEBMC23,87654321
+const char *ssid = "ELIZABETH-1";
+const char *pass = "CSEBMC23"; //"147258369";
 
 // Conexion Websocket
-const char *ws_server = "192.168.0.17"; //"34.176.62.15"
+const char *ws_server = "34.176.62.15"; //"34.176.62.15"
 const int ws_port = 8765;
 const char *ws_path = "ESP32";
 
 // Variables globales
 WebSocketsClient webSocket;
 uint8_t contadorFrames = 0;
-#define bufferLen 1024
-int16_t buffer_16[bufferLen];
-uint8_t buffer_in[bufferLen];
-uint8_t buffer_out[bufferLen];
 
 // Manejador de tareas
 TaskHandle_t task1Handle = NULL;
@@ -38,23 +27,24 @@ SemaphoreHandle_t xMutex;
 // Task
 void enviarDatosTask(void *parameter);
 
-// CAMERA_MODEL_ESP32S3_EYE
-#define PWDN_GPIO_NUM -1
+// CAMERA_MODEL_AI_THINKER
+#define PWDN_GPIO_NUM 32
 #define RESET_GPIO_NUM -1
-#define XCLK_GPIO_NUM 15
-#define SIOD_GPIO_NUM 4
-#define SIOC_GPIO_NUM 5
-#define Y2_GPIO_NUM 11
-#define Y3_GPIO_NUM 9
-#define Y4_GPIO_NUM 8
-#define Y5_GPIO_NUM 10
-#define Y6_GPIO_NUM 12
-#define Y7_GPIO_NUM 18
-#define Y8_GPIO_NUM 17
-#define Y9_GPIO_NUM 16
-#define VSYNC_GPIO_NUM 6
-#define HREF_GPIO_NUM 7
-#define PCLK_GPIO_NUM 13
+#define XCLK_GPIO_NUM 0
+#define SIOD_GPIO_NUM 26
+#define SIOC_GPIO_NUM 27
+
+#define Y9_GPIO_NUM 35
+#define Y8_GPIO_NUM 34
+#define Y7_GPIO_NUM 39
+#define Y6_GPIO_NUM 36
+#define Y5_GPIO_NUM 21
+#define Y4_GPIO_NUM 19
+#define Y3_GPIO_NUM 18
+#define Y2_GPIO_NUM 5
+#define VSYNC_GPIO_NUM 25
+#define HREF_GPIO_NUM 23
+#define PCLK_GPIO_NUM 22
 
 // Funciones
 
@@ -109,38 +99,6 @@ void iniCamara()
   Serial.println("Camara listo");
 }
 
-void i2s_install()
-{
-  // Set up I2S Processor configuration
-  const i2s_config_t i2s_config = {
-      .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
-      .sample_rate = 16000,
-      .bits_per_sample = i2s_bits_per_sample_t(16),
-      .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
-      .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
-      .intr_alloc_flags = 0,
-      .dma_buf_count = 10,
-      .dma_buf_len = bufferLen,
-      .use_apll = false,
-      .tx_desc_auto_clear = true,
-      .fixed_mclk = 0};
-  i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
-  Serial.println("Configurando i2s");
-}
-
-void i2s_setpin()
-{
-  // Set I2S pin configuration
-  const i2s_pin_config_t pin_config = {
-      .bck_io_num = I2S_SCK,
-      .ws_io_num = I2S_WS,
-      .data_out_num = -1,
-      .data_in_num = I2S_SD};
-
-  i2s_set_pin(I2S_PORT, &pin_config);
-  Serial.println("Seteando i2s");
-}
-
 void conectarWifi(void)
 {
 
@@ -180,13 +138,13 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
   case WStype_DISCONNECTED:
   {
     Serial.println("Desconectado del servidor WebSocket");
-    digitalWrite(2, LOW);
+    // digitalWrite(2, LOW);
     break;
   }
   case WStype_CONNECTED:
   {
     Serial.println("Conectado al servidor WebSocket");
-    digitalWrite(2, HIGH);
+    // digitalWrite(2, HIGH);
     break;
   }
   case WStype_TEXT:
@@ -245,17 +203,13 @@ void setup()
 
   Serial.begin(115200);
   vTaskDelay(100 / portTICK_PERIOD_MS);
-  pinMode(2, OUTPUT);
-  vTaskDelay(100 / portTICK_PERIOD_MS);
-  digitalWrite(2, LOW);
+  // pinMode(2, OUTPUT);
+  // vTaskDelay(100 / portTICK_PERIOD_MS);
+  // digitalWrite(2, LOW);
+  // vTaskDelay(100 / portTICK_PERIOD_MS);
+  conectarWifi();
   vTaskDelay(100 / portTICK_PERIOD_MS);
   iniCamara();
-  vTaskDelay(100 / portTICK_PERIOD_MS);
-  i2s_install();
-  i2s_setpin();
-  i2s_start(I2S_PORT);
-  vTaskDelay(100 / portTICK_PERIOD_MS);
-  conectarWifi();
   vTaskDelay(100 / portTICK_PERIOD_MS);
   conectarWebSocket();
   Serial.println("Configurando WebSocket");
@@ -281,25 +235,31 @@ void loop()
 
     if (fb)
     {
-
+      // Serial.println(fb->len);
       if (webSocket.isConnected())
       {
+
         webSocket.sendBIN(fb->buf, fb->len);
-        esp_camera_fb_return(fb);
+        /*
+                contadorFrames++;
+
+                if(contadorFrames >= 12){
+                  contadorFrames = 0;
+                  enviarSensado();
+
+                }
+        */
       }
-      else
-      {
-        esp_camera_fb_return(fb);
-      }
+      esp_camera_fb_return(fb);
     }
     else
     {
       esp_camera_fb_return(fb);
     }
+
     xSemaphoreGive(xMutex);
   }
-
-  vTaskDelay(40 / portTICK_PERIOD_MS);
+  vTaskDelay(50 / portTICK_PERIOD_MS);
 }
 
 void enviarDatosTask(void *parameter)
@@ -313,27 +273,21 @@ void enviarDatosTask(void *parameter)
 
   for (;;)
   {
-
     if (xSemaphoreTake(xMutex, portMAX_DELAY) == pdTRUE)
     {
-      size_t bytesIn = 0;
-      esp_err_t result = i2s_read(I2S_PORT, &buffer_16, bufferLen, &bytesIn, portMAX_DELAY);
-
-      if (result == ESP_OK && bytesIn > 0)
+      if (webSocket.isConnected())
       {
-        if (webSocket.isConnected())
+
+        contadorFrames++;
+
+        if (contadorFrames >= 15)
         {
-          webSocket.sendBIN((uint8_t *)buffer_16, bytesIn);
-          contadorFrames++;
-          if (contadorFrames >= 30)
-          {
-            contadorFrames = 0;
-            enviarSensado();
-          }
+          contadorFrames = 0;
+          enviarSensado();
         }
       }
       xSemaphoreGive(xMutex);
     }
-    vTaskDelay(10 / portTICK_PERIOD_MS);
+    vTaskDelay(50 / portTICK_PERIOD_MS);
   }
 }
